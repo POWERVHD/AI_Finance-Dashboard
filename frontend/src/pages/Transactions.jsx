@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import TransactionForm from '../components/TransactionForm';
 import TransactionList from '../components/TransactionList';
 import { transactionsAPI } from '../services/api';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
@@ -54,13 +56,13 @@ function Transactions() {
   };
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1>Transactions</h1>
+    <div className="container mx-auto p-6">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
       </div>
 
       {/* Transaction Form */}
-      <div className="card">
+      <div className="mb-6">
         <TransactionForm
           editingTransaction={editingTransaction}
           onSuccess={handleFormSuccess}
@@ -70,33 +72,31 @@ function Transactions() {
 
       {/* Loading State */}
       {loading && (
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading transactions...</p>
+        <div className="flex flex-col items-center justify-center py-12 gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading transactions...</p>
         </div>
       )}
 
       {/* Error State */}
       {error && !loading && (
-        <div className="error-container">
-          <div className="alert alert-error">
+        <div className="flex flex-col items-center justify-center py-12 gap-4">
+          <div className="rounded-md bg-destructive/15 p-4 text-sm text-destructive border border-destructive/30 max-w-md">
             {error}
           </div>
-          <button onClick={fetchTransactions} className="btn btn-primary">
+          <Button onClick={fetchTransactions}>
             Try Again
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Transaction List */}
       {!loading && !error && (
-        <div className="card">
-          <TransactionList
-            transactions={transactions}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </div>
+        <TransactionList
+          transactions={transactions}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   );

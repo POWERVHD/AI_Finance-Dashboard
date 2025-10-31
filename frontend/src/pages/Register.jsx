@@ -5,6 +5,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 function Register() {
   const navigate = useNavigate();
@@ -73,95 +77,104 @@ function Register() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1>Finance Dashboard</h1>
-          <h2>Create Your Account</h2>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold tracking-tight">
+            Finance Dashboard
+          </CardTitle>
+          <CardDescription className="text-base">
+            Create Your Account
+          </CardDescription>
+        </CardHeader>
 
-        {error && (
-          <div className="alert alert-error">
-            {error}
-          </div>
-        )}
+        <CardContent>
+          {error && (
+            <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive border border-destructive/30">
+              {error}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="full_name">Full Name</label>
-            <input
-              type="text"
-              id="full_name"
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleChange}
-              placeholder="Enter your full name"
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="full_name">Full Name</Label>
+              <Input
+                type="text"
+                id="full_name"
+                name="full_name"
+                value={formData.full_name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                disabled={loading}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                disabled={loading}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="At least 6 characters"
+                disabled={loading}
+                required
+                minLength={6}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Re-enter your password"
+                disabled={loading}
+                required
+              />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full"
               disabled={loading}
-              required
-            />
+            >
+              {loading ? 'Creating account...' : 'Register'}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center text-sm">
+            <p className="text-muted-foreground">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                className="font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Login here
+              </Link>
+            </p>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              disabled={loading}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="At least 6 characters"
-              disabled={loading}
-              required
-              minLength={6}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Re-enter your password"
-              disabled={loading}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary btn-block"
-            disabled={loading}
-          >
-            {loading ? 'Creating account...' : 'Register'}
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          <p>
-            Already have an account?{' '}
-            <Link to="/login" className="link">
-              Login here
-            </Link>
-          </p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

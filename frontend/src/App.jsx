@@ -4,6 +4,7 @@
  */
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './components/theme-provider';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -69,11 +70,13 @@ function AppRouter() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRouter />
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider defaultTheme="system" storageKey="finance-dashboard-theme">
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRouter />
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

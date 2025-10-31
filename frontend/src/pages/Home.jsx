@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Dashboard from '../components/Dashboard';
 import { dashboardAPI } from '../services/api';
+import { Button } from '@/components/ui/button';
+import { Loader2, Plus } from 'lucide-react';
 
 function Home() {
   const [summary, setSummary] = useState(null);
@@ -32,10 +34,10 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="page-container">
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading dashboard...</p>
+      <div className="container mx-auto p-6">
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -43,25 +45,28 @@ function Home() {
 
   if (error) {
     return (
-      <div className="page-container">
-        <div className="error-container">
-          <div className="alert alert-error">
+      <div className="container mx-auto p-6">
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+          <div className="rounded-md bg-destructive/15 p-4 text-sm text-destructive border border-destructive/30 max-w-md">
             {error}
           </div>
-          <button onClick={fetchDashboardSummary} className="btn btn-primary">
+          <Button onClick={fetchDashboardSummary}>
             Try Again
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1>Dashboard</h1>
-        <Link to="/transactions" className="btn btn-primary">
-          Add Transaction
+    <div className="container mx-auto p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <Link to="/transactions">
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Transaction
+          </Button>
         </Link>
       </div>
 

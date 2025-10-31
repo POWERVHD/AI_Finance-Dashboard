@@ -4,6 +4,18 @@
  */
 import { useState, useEffect } from 'react';
 import { transactionsAPI } from '../services/api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 // Categories constant matching backend
 const CATEGORIES = [
@@ -52,6 +64,24 @@ function TransactionForm({ editingTransaction, onSuccess, onCancel }) {
       [name]: value,
     });
     // Clear messages when user types
+    if (error) setError('');
+    if (success) setSuccess('');
+  };
+
+  const handleTypeChange = (value) => {
+    setFormData({
+      ...formData,
+      type: value,
+    });
+    if (error) setError('');
+    if (success) setSuccess('');
+  };
+
+  const handleCategoryChange = (value) => {
+    setFormData({
+      ...formData,
+      category: value,
+    });
     if (error) setError('');
     if (success) setSuccess('');
   };
@@ -135,130 +165,130 @@ function TransactionForm({ editingTransaction, onSuccess, onCancel }) {
   };
 
   return (
-    <div className="transaction-form-container">
-      <h3>{editingTransaction ? 'Edit Transaction' : 'Add New Transaction'}</h3>
+    <Card>
+      <CardHeader>
+        <CardTitle>{editingTransaction ? 'Edit Transaction' : 'Add New Transaction'}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {error && (
+          <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive border border-destructive/30">
+            {error}
+          </div>
+        )}
 
-      {error && (
-        <div className="alert alert-error">
-          {error}
-        </div>
-      )}
+        {success && (
+          <div className="mb-4 rounded-md bg-green-500/15 p-3 text-sm text-green-700 dark:text-green-400 border border-green-500/30">
+            {success}
+          </div>
+        )}
 
-      {success && (
-        <div className="alert alert-success">
-          {success}
-        </div>
-      )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="amount">Amount ($)</Label>
+              <Input
+                type="number"
+                id="amount"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                placeholder="0.00"
+                step="0.01"
+                min="0.01"
+                disabled={loading}
+                required
+              />
+            </div>
 
-      <form onSubmit={handleSubmit} className="transaction-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="amount">Amount ($)</label>
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              value={formData.amount}
+            <div className="space-y-2">
+              <Label htmlFor="transaction_date">Date</Label>
+              <Input
+                type="date"
+                id="transaction_date"
+                name="transaction_date"
+                value={formData.transaction_date}
+                onChange={handleChange}
+                disabled={loading}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Input
+              type="text"
+              id="description"
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              placeholder="0.00"
-              step="0.01"
-              min="0.01"
+              placeholder="Enter transaction description"
               disabled={loading}
               required
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="transaction_date">Date</label>
-            <input
-              type="date"
-              id="transaction_date"
-              name="transaction_date"
-              value={formData.transaction_date}
-              onChange={handleChange}
+          <div className="space-y-2">
+            <Label>Type</Label>
+            <RadioGroup
+              value={formData.type}
+              onValueChange={handleTypeChange}
               disabled={loading}
-              required
-            />
+              className="flex gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="expense" id="expense" />
+                <Label htmlFor="expense" className="font-normal cursor-pointer">
+                  Expense
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="income" id="income" />
+                <Label htmlFor="income" className="font-normal cursor-pointer">
+                  Income
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Enter transaction description"
-            disabled={loading}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Type</label>
-          <div className="radio-group">
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="type"
-                value="expense"
-                checked={formData.type === 'expense'}
-                onChange={handleChange}
-                disabled={loading}
-              />
-              <span>Expense</span>
-            </label>
-            <label className="radio-label">
-              <input
-                type="radio"
-                name="type"
-                value="income"
-                checked={formData.type === 'income'}
-                onChange={handleChange}
-                disabled={loading}
-              />
-              <span>Income</span>
-            </label>
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="category">Category</label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            disabled={loading}
-            required
-          >
-            {CATEGORIES.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-actions">
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Saving...' : editingTransaction ? 'Update Transaction' : 'Add Transaction'}
-          </button>
-          {editingTransaction && (
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleCancel}
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <Select
+              value={formData.category}
+              onValueChange={handleCategoryChange}
               disabled={loading}
             >
-              Cancel
-            </button>
-          )}
-        </div>
-      </form>
-    </div>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex gap-2 pt-4">
+            <Button type="submit" disabled={loading} className="flex-1">
+              {loading ? 'Saving...' : editingTransaction ? 'Update Transaction' : 'Add Transaction'}
+            </Button>
+            {editingTransaction && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCancel}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 

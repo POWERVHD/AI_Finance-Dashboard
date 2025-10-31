@@ -2,12 +2,16 @@
  * Dashboard Component
  * Displays financial summary and recent transactions
  */
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { TrendingUp, TrendingDown, Wallet, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 
 function Dashboard({ summary }) {
   if (!summary) {
     return (
-      <div className="dashboard-loading">
-        <p>Loading dashboard data...</p>
+      <div className="flex items-center justify-center py-8">
+        <p className="text-muted-foreground">Loading dashboard data...</p>
       </div>
     );
   }
@@ -36,111 +40,133 @@ function Dashboard({ summary }) {
   };
 
   return (
-    <div className="dashboard">
+    <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="summary-cards">
-        <div className="card card-income">
-          <div className="card-header">
-            <span className="card-icon">=È</span>
-            <h3>Total Income</h3>
-          </div>
-          <div className="card-body">
-            <p className="amount text-success">{formatCurrency(total_income)}</p>
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        {/* Total Income Card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+            <TrendingUp className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {formatCurrency(total_income)}
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="card card-expense">
-          <div className="card-header">
-            <span className="card-icon">=É</span>
-            <h3>Total Expense</h3>
-          </div>
-          <div className="card-body">
-            <p className="amount text-danger">{formatCurrency(total_expense)}</p>
-          </div>
-        </div>
+        {/* Total Expense Card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Expense</CardTitle>
+            <TrendingDown className="h-4 w-4 text-red-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
+              {formatCurrency(total_expense)}
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="card card-balance">
-          <div className="card-header">
-            <span className="card-icon">=µ</span>
-            <h3>Balance</h3>
-          </div>
-          <div className="card-body">
-            <p className={`amount ${balance >= 0 ? 'text-success' : 'text-danger'}`}>
+        {/* Balance Card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Balance</CardTitle>
+            <Wallet className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {formatCurrency(balance)}
-            </p>
-          </div>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Recent Transactions and Expenses by Category */}
-      <div className="dashboard-details">
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Recent Transactions */}
-        <div className="card">
-          <div className="card-header">
-            <h3>Recent Transactions</h3>
-          </div>
-          <div className="card-body">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
             {recent_transactions.length > 0 ? (
-              <div className="transactions-list">
-                {recent_transactions.map((transaction) => (
-                  <div key={transaction.id} className="transaction-item">
-                    <div className="transaction-info">
-                      <p className="transaction-description">{transaction.description}</p>
-                      <p className="transaction-meta">
-                        {transaction.category} " {formatDate(transaction.transaction_date)}
-                      </p>
+              <div className="space-y-4">
+                {recent_transactions.map((transaction, index) => (
+                  <div key={transaction.id}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          {transaction.type === 'income' ? (
+                            <ArrowUpCircle className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <ArrowDownCircle className="h-4 w-4 text-red-600" />
+                          )}
+                          <p className="font-medium">{transaction.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="outline" className="text-xs">
+                            {transaction.category}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDate(transaction.transaction_date)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                          {transaction.type === 'income' ? '+' : '-'}
+                          {formatCurrency(Math.abs(transaction.amount))}
+                        </p>
+                      </div>
                     </div>
-                    <div className="transaction-amount">
-                      <p
-                        className={
-                          transaction.type === 'income' ? 'text-success' : 'text-danger'
-                        }
-                      >
-                        {transaction.type === 'income' ? '+' : '-'}
-                        {formatCurrency(Math.abs(transaction.amount))}
-                      </p>
-                    </div>
+                    {index < recent_transactions.length - 1 && <Separator className="mt-4" />}
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="empty-state">No recent transactions</p>
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No recent transactions
+              </p>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Expenses by Category */}
-        <div className="card">
-          <div className="card-header">
-            <h3>Expenses by Category</h3>
-          </div>
-          <div className="card-body">
+        <Card>
+          <CardHeader>
+            <CardTitle>Expenses by Category</CardTitle>
+          </CardHeader>
+          <CardContent>
             {Object.keys(expenses_by_category).length > 0 ? (
-              <div className="category-list">
+              <div className="space-y-4">
                 {Object.entries(expenses_by_category)
                   .sort(([, a], [, b]) => b - a)
                   .map(([category, amount]) => (
-                    <div key={category} className="category-item">
-                      <div className="category-info">
-                        <span className="category-name">{category}</span>
-                        <div className="category-bar">
-                          <div
-                            className="category-bar-fill"
-                            style={{
-                              width: `${(amount / total_expense) * 100}%`,
-                            }}
-                          ></div>
-                        </div>
+                    <div key={category} className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium">{category}</span>
+                        <span className="font-semibold">{formatCurrency(amount)}</span>
                       </div>
-                      <span className="category-amount">{formatCurrency(amount)}</span>
+                      <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                        <div
+                          className="h-full bg-primary transition-all"
+                          style={{
+                            width: `${(amount / total_expense) * 100}%`,
+                          }}
+                        />
+                      </div>
                     </div>
                   ))}
               </div>
             ) : (
-              <p className="empty-state">No expense data available</p>
+              <p className="text-sm text-muted-foreground text-center py-8">
+                No expense data available
+              </p>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
