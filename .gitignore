@@ -138,3 +138,5 @@ $RECYCLE.BIN/
 # Linux
 .directory
 .Trash-*
+
+SHADCN_UPGRADE_GUIDE.md
