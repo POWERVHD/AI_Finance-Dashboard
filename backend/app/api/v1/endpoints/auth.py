@@ -30,9 +30,7 @@ async def register(
     db: Session = Depends(get_db)
 ):
     """
-    Register a new user.
-
-    Creates a new user account and returns an access token.
+    Register a new user. Creates a new user account and returns an access token.
 
     Args:
         user_data: User registration data (email, password, full_name)
@@ -63,9 +61,7 @@ async def login(
     db: Session = Depends(get_db)
 ):
     """
-    Login with email and password.
-
-    Authenticates user and returns an access token.
+    Login with email and password. Authenticates user and returns an access token.
 
     Args:
         form_data: OAuth2 form with username (email) and password
@@ -102,14 +98,13 @@ async def get_me(
     current_user: UserModel = Depends(get_current_user)
 ):
     """
-    Get current user information.
-
-    Returns information about the currently authenticated user.
+    Get current user information. Returns information about the currently authenticated user.
 
     Args:
         current_user: Current authenticated user from token
 
     Returns:
         User information (id, email, full_name, is_active, timestamps)
+
     """
     return current_user

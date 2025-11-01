@@ -288,14 +288,14 @@ def get_dashboard_summary(db: Session, user_id: int) -> dict:
 
     return {
         "total_income": total_income,
-        "total_expense": total_expenses,  # Frontend expects singular
+        "total_expense": total_expenses,  # Frontend expects singular response
         "balance": balance,
         "recent_transactions": recent_transactions,
         "expenses_by_category": expenses_by_category,
     }
 
 
-def get_transaction_trends(
+def get_transaction_trends(  # This is done for Graph Potrayal
     db: Session,
     user_id: int,
     period: str = "monthly",

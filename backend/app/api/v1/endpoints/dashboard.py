@@ -47,8 +47,8 @@ async def get_dashboard_summary(
     return summary
 
 
-@router.get("/trends")
-async def get_transaction_trends(
+@router.get("/trends")                                                         # Done For Graphs
+async def get_transaction_trends( 
     period: str = Query(default="monthly", regex="^(daily|weekly|monthly)$"),
     limit: int = Query(default=12, ge=1, le=30),
     current_user: User = Depends(get_current_user),

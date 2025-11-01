@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { TrendingUp, TrendingDown, Wallet, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { TransactionAreaChart } from '@/components/charts/TransactionAreaChart';
 import { ExpenseDonutChart } from '@/components/charts/ExpenseDonutChart';
+import { ChatInterface } from '@/components/AIChat/ChatInterface';
 import { dashboardAPI } from '@/services/api';
 
 function Dashboard({ summary }) {
@@ -189,6 +190,9 @@ function Dashboard({ summary }) {
           )}
         </CardContent>
       </Card>
+
+      {/* AI Financial Coach - Full Width */}
+      <ChatInterface />
     </div>
   );
 }
