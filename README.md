@@ -6,6 +6,7 @@ A modern, full-stack personal finance management application with AI-powered fin
 [![Backend API](https://img.shields.io/badge/API-docs-blue)](https://neofinance-prod.onrender.com/docs)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
+
 ---
 
 ## 🚀 Live Demo
@@ -60,7 +61,7 @@ NeoFinance follows a modern microservices architecture with complete separation 
 ```
 
 **Components:**
-- **Frontend (Vercel):** React SPA with CDN distribution
+- **Frontend (Vercel):** React with CDN distribution
 - **Backend (Render):** FastAPI REST API with auto-scaling
 - **Database (Supabase):** Managed PostgreSQL with connection pooling
 - **AI Service (Google):** Gemini AI for financial insights
@@ -68,7 +69,7 @@ NeoFinance follows a modern microservices architecture with complete separation 
 **Benefits:**
 - Each component scales independently
 - Zero-downtime deployments
-- Cost-optimized (all free tiers for demo)
+- Cost-optimized (free tiers for demo)
 - Production-ready architecture
 
 ---
@@ -76,33 +77,32 @@ NeoFinance follows a modern microservices architecture with complete separation 
 ## 🛠️ Tech Stack
 
 ### Backend
-- **Framework:** FastAPI 0.104.1
-- **Database:** PostgreSQL 15 (via Supabase)
-- **ORM:** SQLAlchemy 2.0.23
-- **Migrations:** Alembic 1.12.1
+- **Framework:** FastAPI
+- **Database:** PostgreSQL (via Supabase)
+- **ORM:** SQLAlchemy
+- **Migrations:** Alembic
 - **Authentication:** JWT with python-jose
-- **Password Hashing:** bcrypt 4.0.1
-- **Validation:** Pydantic 2.5.0
-- **AI Integration:** Google Generative AI (Gemini) 0.8.5
-- **Server:** Uvicorn 0.24.0
+- **Password Hashing:** bcrypt
+- **Validation:** Pydantic
+- **AI Integration:** Google Generative AI (Gemini)
+- **Server:** Uvicorn
 
 ### Frontend
-- **Framework:** React 18.2.0
-- **Build Tool:** Vite 5.0.0
-- **Routing:** React Router DOM 6.20.0
-- **HTTP Client:** Axios 1.6.2
+- **Framework:** React
+- **Build Tool:** Vite
+- **Routing:** React Router DOM
+- **HTTP Client:** Axios
 - **UI Components:** shadcn/ui (Radix UI)
-- **Styling:** TailwindCSS 3.4.1
-- **Charts:** Recharts 3.3.0
-- **Themes:** next-themes 0.4.6
-- **Icons:** Lucide React 0.548.0
+- **Styling:** TailwindCSS
+- **Charts:** Recharts
+- **Themes:** next-themes
+- **Icons:** Lucide React
 
 ### DevOps & Deployment
 - **Frontend Hosting:** Vercel
 - **Backend Hosting:** Render
 - **Database Hosting:** Supabase
 - **Version Control:** Git + GitHub
-- **CI/CD:** Automatic deployment on git push
 
 ---
 
@@ -445,8 +445,6 @@ alembic upgrade head
 
 ### Getting Help
 
-- Check [deployment_plan.md](./deployment_plan.md) troubleshooting section
-- Review [DEPLOYMENT_READINESS_ANALYSIS.md](./DEPLOYMENT_READINESS_ANALYSIS.md)
 - Check API documentation at `/docs` endpoint
 
 ---
@@ -458,8 +456,8 @@ alembic upgrade head
 ✅ **Microservices Architecture** - Production-ready separation of concerns
 ✅ **AI Integration** - Google Gemini AI for financial insights
 ✅ **Secure Authentication** - JWT with bcrypt password hashing
-✅ **Database Migrations** - Alembic for schema version control
-✅ **Modern UI** - shadcn/ui with TailwindCSS and dark mode
+✅ **Database Migrations** - Alembic
+✅ **Modern UI** - shadcn/ui with TailwindCSS
 ✅ **API Documentation** - Auto-generated Swagger UI
 ✅ **Environment Management** - Proper secrets handling
 ✅ **Responsive Design** - Mobile-first approach
