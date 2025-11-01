@@ -136,7 +136,7 @@ NeoFinance_Prod/
 │   ├── alembic/                      # Database migrations
 │   │   └── versions/
 │   ├── tests/                        # Backend tests
-│   ├── .env.example                  # Environment template
+│   ├── .env                          # Environment template
 │   ├── main.py                       # Production entry point
 │   ├── requirements.txt              # Python dependencies
 │   ├── runtime.txt                   # Python version for Render
@@ -165,7 +165,7 @@ NeoFinance_Prod/
 │   │   ├── main.jsx                  # Entry point
 │   │   └── index.css                 # Global styles
 │   ├── public/                       # Static assets
-│   ├── .env.example                  # Environment template
+│   ├── .env                          # Environment template
 │   ├── package.json                  # Node dependencies
 │   ├── vite.config.js                # Vite configuration
 │   ├── tailwind.config.js            # Tailwind configuration
@@ -456,14 +456,13 @@ alembic upgrade head
 ✅ **Microservices Architecture** - Production-ready separation of concerns
 ✅ **AI Integration** - Google Gemini AI for financial insights
 ✅ **Secure Authentication** - JWT with bcrypt password hashing
-✅ **Database Migrations** - Alembic
-✅ **Modern UI** - shadcn/ui with TailwindCSS
+✅ **Database Migrations** - Alembic for schema version control
+✅ **Modern UI** - shadcn/ui with TailwindCSS and dark mode
 ✅ **API Documentation** - Auto-generated Swagger UI
 ✅ **Environment Management** - Proper secrets handling
 ✅ **Responsive Design** - Mobile-first approach
 ✅ **CI/CD Pipeline** - Automated deployments from Git
 ✅ **Connection Pooling** - Supabase for database optimization
-
 ### Best Practices
 
 - ✅ Environment-based configuration
@@ -504,24 +503,7 @@ alembic upgrade head
 
 ---
 
-## 🗺️ Next Steps
-
-### Completed ✅
-- User authentication
-- Transaction CRUD
-- Dashboard analytics
-- AI financial coach
-- Production deployment
-- Dark mode
-- Responsive design
-
-### In Progress 🚧
-- Budget planning
-- Recurring transactions
-- Export to CSV/PDF
-- Multi-currency support
-
-### Planning Further Enhancements 📝
+## Planning Further Enhancements 📝
 - Mobile app (React Native)
 - Email notifications
 - Bank account integration
@@ -534,19 +516,6 @@ alembic upgrade head
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **FastAPI** - Modern Python web framework
-- **React** - UI library
-- **shadcn/ui** - Beautiful component library
-- **Vercel** - Frontend hosting
-- **Render** - Backend hosting
-- **Supabase** - Database hosting
-- **Google Gemini** - AI integration
-- **Claude Code** - Development assistance
 
 ---
 
