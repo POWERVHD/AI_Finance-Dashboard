@@ -2,12 +2,36 @@
  * Dashboard Component
  * Displays financial summary and recent transactions
  */
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { TrendingUp, TrendingDown, Wallet, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { TransactionAreaChart } from '@/components/charts/TransactionAreaChart';
+import { ExpenseDonutChart } from '@/components/charts/ExpenseDonutChart';
+import { dashboardAPI } from '@/services/api';
 
 function Dashboard({ summary }) {
+  const [trendsData, setTrendsData] = useState([]);
+  const [loadingTrends, setLoadingTrends] = useState(true);
+
+  // Fetch trends data when component mounts
+  useEffect(() => {
+    const fetchTrends = async () => {
+      try {
+        setLoadingTrends(true);
+        const response = await dashboardAPI.getTrends('monthly', 6);
+        setTrendsData(response.data.data || []);
+      } catch (error) {
+        console.error('Error fetching trends:', error);
+        setTrendsData([]);
+      } finally {
+        setLoadingTrends(false);
+      }
+    };
+
+    fetchTrends();
+  }, []);
   if (!summary) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -83,91 +107,88 @@ function Dashboard({ summary }) {
         </Card>
       </div>
 
-      {/* Recent Transactions and Expenses by Category */}
+      {/* Charts Section - Side by Side */}
       <div className="grid gap-4 md:grid-cols-2">
-        {/* Recent Transactions */}
+        {/* Transaction Trends Area Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
+            <CardTitle>Transaction Trends</CardTitle>
           </CardHeader>
           <CardContent>
-            {recent_transactions.length > 0 ? (
-              <div className="space-y-4">
-                {recent_transactions.map((transaction, index) => (
-                  <div key={transaction.id}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          {transaction.type === 'income' ? (
-                            <ArrowUpCircle className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <ArrowDownCircle className="h-4 w-4 text-red-600" />
-                          )}
-                          <p className="font-medium">{transaction.description}</p>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="text-xs">
-                            {transaction.category}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {formatDate(transaction.transaction_date)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                          {transaction.type === 'income' ? '+' : '-'}
-                          {formatCurrency(Math.abs(transaction.amount))}
-                        </p>
-                      </div>
-                    </div>
-                    {index < recent_transactions.length - 1 && <Separator className="mt-4" />}
-                  </div>
-                ))}
+            {loadingTrends ? (
+              <div className="flex items-center justify-center h-[300px]">
+                <p className="text-sm text-muted-foreground">Loading trends...</p>
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                No recent transactions
-              </p>
+              <TransactionAreaChart data={trendsData} />
             )}
           </CardContent>
         </Card>
 
-        {/* Expenses by Category */}
+        {/* Expenses by Category Donut Chart */}
         <Card>
           <CardHeader>
             <CardTitle>Expenses by Category</CardTitle>
           </CardHeader>
           <CardContent>
-            {Object.keys(expenses_by_category).length > 0 ? (
-              <div className="space-y-4">
-                {Object.entries(expenses_by_category)
-                  .sort(([, a], [, b]) => b - a)
-                  .map(([category, amount]) => (
-                    <div key={category} className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">{category}</span>
-                        <span className="font-semibold">{formatCurrency(amount)}</span>
-                      </div>
-                      <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                        <div
-                          className="h-full bg-primary transition-all"
-                          style={{
-                            width: `${(amount / total_expense) * 100}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                No expense data available
-              </p>
-            )}
+            <ExpenseDonutChart
+              data={Object.entries(expenses_by_category).map(([name, amount]) => ({
+                name,
+                value: parseFloat(amount),
+                percentage: (amount / total_expense) * 100
+              }))}
+            />
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Transactions - Full Width */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Transactions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {recent_transactions.length > 0 ? (
+            <div className="space-y-4">
+              {recent_transactions.map((transaction, index) => (
+                <div key={transaction.id}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        {transaction.type === 'income' ? (
+                          <ArrowUpCircle className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <ArrowDownCircle className="h-4 w-4 text-red-600" />
+                        )}
+                        <p className="font-medium">{transaction.description}</p>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs">
+                          {transaction.category}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(transaction.transaction_date)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                        {transaction.type === 'income' ? '+' : '-'}
+                        {formatCurrency(Math.abs(transaction.amount))}
+                      </p>
+                    </div>
+                  </div>
+                  {index < recent_transactions.length - 1 && <Separator className="mt-4" />}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              No recent transactions
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

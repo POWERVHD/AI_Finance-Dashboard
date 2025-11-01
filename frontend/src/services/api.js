@@ -61,6 +61,8 @@ export const transactionsAPI = {
 // Dashboard API
 export const dashboardAPI = {
   getSummary: () => api.get('/dashboard/summary'),
+  getTrends: (period = 'monthly', limit = 12) =>
+    api.get('/dashboard/trends', { params: { period, limit } }),
 };
 
 export default api;

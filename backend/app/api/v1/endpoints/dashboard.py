@@ -3,9 +3,10 @@ Dashboard endpoint for summary statistics.
 
 Provides endpoints for:
 - Get dashboard summary (income, expenses, balance, recent transactions)
+- Get transaction trends over time
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.core.deps import get_current_user
@@ -44,3 +45,31 @@ async def get_dashboard_summary(
         user_id=current_user.id
     )
     return summary
+
+
+@router.get("/trends")
+async def get_transaction_trends(
+    period: str = Query(default="monthly", regex="^(daily|weekly|monthly)$"),
+    limit: int = Query(default=12, ge=1, le=30),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Get transaction trends over time.
+
+    Args:
+        period: Time period to group by (daily, weekly, monthly)
+        limit: Number of periods to return (default 12)
+        current_user: Current authenticated user
+        db: Database session
+
+    Returns:
+        List of trend data with date, income, and expense for each period
+    """
+    trends = transaction_service.get_transaction_trends(
+        db=db,
+        user_id=current_user.id,
+        period=period,
+        limit=limit
+    )
+    return {"data": trends, "period": period}

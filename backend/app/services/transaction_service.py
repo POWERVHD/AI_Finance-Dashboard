@@ -8,9 +8,9 @@ This module provides business logic for:
 - Expense aggregations by category
 """
 
-from datetime import date
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-from sqlalchemy import func
+from sqlalchemy import func, extract
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 
@@ -293,3 +293,123 @@ def get_dashboard_summary(db: Session, user_id: int) -> dict:
         "recent_transactions": recent_transactions,
         "expenses_by_category": expenses_by_category,
     }
+
+
+def get_transaction_trends(
+    db: Session,
+    user_id: int,
+    period: str = "monthly",
+    limit: int = 12
+) -> list[dict]:
+    """
+    Get transaction trends over time grouped by period.
+
+    Args:
+        db: Database session
+        user_id: User ID
+        period: Period to group by ("daily", "weekly", "monthly")
+        limit: Number of periods to return (default 12 for monthly)
+
+    Returns:
+        List of dictionaries with date, income, and expense for each period
+    """
+    # Calculate the start date based on period and limit
+    now = datetime.now()
+    if period == "monthly":
+        # Get last N months
+        months_data = []
+        for i in range(limit - 1, -1, -1):
+            # Calculate the month
+            target_date = now - timedelta(days=i * 30)
+            month = target_date.month
+            year = target_date.year
+
+            # Get income for this month
+            income = db.query(func.sum(Transaction.amount)).filter(
+                Transaction.user_id == user_id,
+                Transaction.type == "income",
+                extract('month', Transaction.transaction_date) == month,
+                extract('year', Transaction.transaction_date) == year
+            ).scalar() or Decimal("0.00")
+
+            # Get expenses for this month
+            expense = db.query(func.sum(Transaction.amount)).filter(
+                Transaction.user_id == user_id,
+                Transaction.type == "expense",
+                extract('month', Transaction.transaction_date) == month,
+                extract('year', Transaction.transaction_date) == year
+            ).scalar() or Decimal("0.00")
+
+            # Format the date label
+            date_label = target_date.strftime("%b %Y")
+
+            months_data.append({
+                "date": date_label,
+                "income": float(income),
+                "expense": float(expense)
+            })
+
+        return months_data
+
+    elif period == "weekly":
+        # Get last N weeks
+        weeks_data = []
+        for i in range(limit - 1, -1, -1):
+            start_date = now - timedelta(weeks=i+1)
+            end_date = now - timedelta(weeks=i)
+
+            # Get income for this week
+            income = db.query(func.sum(Transaction.amount)).filter(
+                Transaction.user_id == user_id,
+                Transaction.type == "income",
+                Transaction.transaction_date >= start_date.date(),
+                Transaction.transaction_date < end_date.date()
+            ).scalar() or Decimal("0.00")
+
+            # Get expenses for this week
+            expense = db.query(func.sum(Transaction.amount)).filter(
+                Transaction.user_id == user_id,
+                Transaction.type == "expense",
+                Transaction.transaction_date >= start_date.date(),
+                Transaction.transaction_date < end_date.date()
+            ).scalar() or Decimal("0.00")
+
+            date_label = f"Week {start_date.strftime('%m/%d')}"
+
+            weeks_data.append({
+                "date": date_label,
+                "income": float(income),
+                "expense": float(expense)
+            })
+
+        return weeks_data
+
+    else:  # daily
+        # Get last N days
+        days_data = []
+        for i in range(limit - 1, -1, -1):
+            target_date = now - timedelta(days=i)
+
+            # Get income for this day
+            income = db.query(func.sum(Transaction.amount)).filter(
+                Transaction.user_id == user_id,
+                Transaction.type == "income",
+                Transaction.transaction_date == target_date.date()
+            ).scalar() or Decimal("0.00")
+
+            # Get expenses for this day
+            expense = db.query(func.sum(Transaction.amount)).filter(
+                Transaction.user_id == user_id,
+                Transaction.type == "expense",
+                Transaction.transaction_date == target_date.date()
+            ).scalar() or Decimal("0.00")
+
+            date_label = target_date.strftime("%b %d")
+
+            days_data.append({
+                "date": date_label,
+                "income": float(income),
+                "expense": float(expense)
+            })
+
+        return days_data
